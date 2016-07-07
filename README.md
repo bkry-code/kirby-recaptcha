@@ -1,5 +1,7 @@
 # Kirby reCaptcha
 
+Validate Google reCaptcha and do something with a PHP and a javascript callback. Some basic coding skills required.
+
 *Version 0.1*
 
 ## Install
@@ -111,5 +113,5 @@ function recaptchaCallback( $post, $response) {
 
 ## License
 
-Kirby Recaptcha - MIT
-Google Recaptcha - [BSD](http://github.com/google/recaptcha/blob/master/LICENSE)
+- Kirby Recaptcha - MIT
+- Google Recaptcha - [BSD](http://github.com/google/recaptcha/blob/master/LICENSE)
