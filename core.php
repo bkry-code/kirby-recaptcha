@@ -26,7 +26,7 @@ class recaptcha {
 	}
 
 	function ip() {
-		return c::get( $this->prefix . '.ip', inet_pton('83.185.85.120') ); // Ändras
+		return c::get( $this->prefix . '.ip', $_SERVER['REMOTE_ADDR'] );
 	}
 
 	function post() {
