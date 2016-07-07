@@ -90,6 +90,8 @@ The callback can be used to get the `xhr` object. From that you can see if the c
 
 ### 3. Add your PHP callback
 
+Add a PHP callback into a plugin.
+
 The PHP callback will make you do something when the captcha is successful. You have access to `$post` and `$response`.
 
 ```php
@@ -105,6 +107,7 @@ function recaptchaCallback( $post, $response) {
 
 - The function name has to be `recaptchaCallback`.
 - In the `$post` the selector is included as well, called `g-recaptcha-selector`.
+- It should be placed just before `</body>`.
 
 ## Requirements
 
@@ -113,5 +116,5 @@ function recaptchaCallback( $post, $response) {
 
 ## License
 
-- Kirby Recaptcha - MIT
+- Kirby reCaptcha - MIT
 - Google Recaptcha - [BSD](http://github.com/google/recaptcha/blob/master/LICENSE)
