@@ -1,9 +1,9 @@
 var recaptcha = (function () {
 	var fn = {};
+	var input;
 	var selector;
 	var form;
 	var route;
-	var input;
 
 	// Init
 	fn.init = function(input_data) {

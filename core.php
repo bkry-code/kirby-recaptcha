@@ -1,68 +1,48 @@
 <?php
-class recaptcha {
-	private $prefix;
-	private $secret;
-	private $ip;
-	private $recaptcha_response;
-	private $post;
-	private $response;
-	private $ajax_status;
+namespace JensTornell\Recaptcha;
+use JensTornell\Recaptcha as Recaptcha;
+use c;
 
+class Core {
 	function __construct() {
 		$this->prefix = 'plugin.recaptcha';
-		$this->secret = $this->secret();
-		$this->post = $this->post();
-		$this->recaptcha_response = $this->recaptchaResponse();
-		$this->recaptcha = $this->recaptcha();
-		$this->response = $this->response();
-		$this->ajax_status = $this->ajaxStatus();
+		$this->post = kirby()->request()->data();
+		$this->secret = c::get( $this->prefix . '.secret');
+		$this->recaptcha = new \ReCaptcha\ReCaptcha( $this->secret );
 
-		$this->callback();
-		echo $this->ajaxResponse();
+		echo $this->callback();
 	}
 
-	function secret() {
-		return c::get($this->prefix . '.secret');
-	}
-
+	// Ip
 	function ip() {
 		return c::get( $this->prefix . '.ip', $_SERVER['REMOTE_ADDR'] );
 	}
 
-	function post() {
-		return kirby()->request()->data();
-	}
-
+	// Recaptcha response
 	function recaptchaResponse() {
 		if( ! empty( $this->post['g-recaptcha-response'] ) ) {
 			return $this->post['g-recaptcha-response'];
 		}
 	}
 
-	function recaptcha() {
-		return new \ReCaptcha\ReCaptcha($this->secret);
+	// Response object
+	function responseObject() {
+		return $this->recaptcha->verify( $this->recaptchaResponse(), $this->ip() );
 	}
 
+	// Response
 	function response() {
-		return $this->recaptcha->verify( $this->recaptcha_response, $this->ip );
-	}
-
-	function ajaxStatus() {
-		if( $this->response->isSuccess() ) {
+		if( $this->responseObject()->isSuccess() ) {
 			return ['success' => true];
 		}
-		$errors = $this->response->getErrorCodes();
-		return ['success' => false, 'message' => $errors];
+		return ['success' => false, 'message' => $this->responseObject()->getErrorCodes()];
 	}
 
+	// Callback
 	function callback() {
-		call_user_func_array("recaptchaCallback", [
+		return call_user_func_array("recaptchaCallback", [
 			'post' => $this->post,
-			'response' => $this->ajax_status,
+			'response' => $this->response(),
 		]);
-	}
-
-	function ajaxResponse() {
-		return json_encode($this->ajax_status);
 	}
 }

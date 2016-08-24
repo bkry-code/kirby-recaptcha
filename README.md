@@ -1,12 +1,24 @@
 # Kirby reCaptcha
 
+*Version 0.2*
+
 Validate Google reCaptcha and do something with a PHP and a javascript callback. Some basic coding skills required.
 
-*Version 0.1*
+![](docs/screenshot.gif)
 
 ## Install
 
-Add the folder `recaptcha` into `/site/plugins/`.
+### Kirby CLI
+
+Run this command:
+
+```
+kirby plugin:install jenstornell/kirby-recaptcha
+```
+
+### Manually
+
+Add the folder `kirby-recaptcha` into `/site/plugins/`.
 
 ## Setup
 
@@ -29,7 +41,7 @@ Add this to your `footer.php` snippet:
 
 ```php
 <?php
-	echo js('/assets/plugins/recaptcha/js/script.js');
+	echo js('/assets/plugins/kirby-recaptcha/js/script.js');
 	echo js('https://www.google.com/recaptcha/api.js?hl=sv');
 ?>
 ```
@@ -58,7 +70,38 @@ Make sure it uses `method` that is `post`.
 </form>
 ```
 
-### 2. Add your javascript callback
+### 2. Add your PHP callback as a plugin
+
+Add a PHP callback into a plugin.
+
+The PHP callback will make you do something when the captcha is successful. You have access to `$post` and `$response`.
+
+```php
+function recaptchaCallback( $post, $response) {
+	print_r( $post );
+	print_r( $response );
+
+	if( $post['g-recaptcha-selector'] == '.my-form') {
+		if( $response['success'] ) {
+			$array = array(
+				'success' => true,
+			);
+		} else {
+			$array = array(
+				'success' => false,
+				'message' => 'Failed!'
+			);
+		}
+		return json_encode($array);
+	}
+}
+```
+
+- The function name has to be `recaptchaCallback`.
+- In the `$post` the selector is included as well, called `g-recaptcha-selector`.
+- It should be placed just before `</body>`.
+
+### 3. Add your javascript callback
 
 This script is to run the reCaptcha.
 
@@ -82,32 +125,23 @@ To make the javascript know about the route you need to send the root url.
 
 **Selector**
 
-Your selector to the html `<form class=".my-form">`.
+Your selector to the html form like above is `.my-form`.
 
 **Callback**
 
 The callback can be used to get the `xhr` object. From that you can see if the captcha was successful or not.
 
-### 3. Add your PHP callback
+## Changelog
 
-Add a PHP callback into a plugin.
+**0.2**
 
-The PHP callback will make you do something when the captcha is successful. You have access to `$post` and `$response`.
+- Added namespaces
+- Making it easier and more correct than before
+- Code enhancements
 
-```php
-function recaptchaCallback( $post, $response) {
-	print_r( $post );
-	print_r( $response );
+**0.1**
 
-	if( $post['g-recaptcha-selector'] == '.my-form') {
-		// Some function call
-	}
-}
-```
-
-- The function name has to be `recaptchaCallback`.
-- In the `$post` the selector is included as well, called `g-recaptcha-selector`.
-- It should be placed just before `</body>`.
+- Initial release
 
 ## Requirements
 
